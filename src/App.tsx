@@ -34,6 +34,28 @@ type node = {
   checked: boolean;
 }
 
+type squareProps = {
+  j: number;
+  i: number;
+  onClick: (arg1: number, arg2: number) => void;
+  col: {
+    id: string;
+    checked: boolean;
+  };
+}
+
+function Square(props: squareProps) {
+  return <span
+    key={props.j}
+    id={props.col.id}
+    onClick={() => props.onClick(props.i, props.j)}
+    className={`square ${props.col.checked ? 'checked' : ''}`}
+  >
+    {props.col.id}
+  </span>
+}
+
+
 function getBoard(shouldCheck = false) {
   var board: node[][] = [];
   for (var i = 0; i < 8; i++) {
@@ -55,17 +77,15 @@ function Game() {
     setBoard(newBoard)
   }
 
-  function delay(i: number, j: number) {
-    setTimeout(() => {
-      const square = window.document.getElementById(`${i},${j}`)!
-      square.className += ' checked'
-    }, 1000 * i * j);
-  }
-
   function onDFS() {
+    let delay = 0
     for (let r = 0; r < 8; r++) {
       for (let c = 0; c < 8; c++) {
-        delay(r, c)
+        delay += 500
+        setTimeout(() => {
+          board[r][c] = { id: `${r},${c}`, checked: true, row: r, col: c }
+          setBoard([...board])
+        }, delay);
       }
     }
   }
@@ -78,7 +98,13 @@ function Game() {
           {board.map((row, i) => (
             <div key={i}>
               {row.map((col, j) => (
-                <span id={col.id} className={`square ${col.checked ? 'checked' : ''}`} onClick={() => onClick(i, j)} key={j}>{col.id}</span>
+                <Square
+                  col={col}
+                  i={i}
+                  j={j}
+                  onClick={onClick}
+                />
+                // <span id={col.id} className={`square ${col.checked ? 'checked' : ''}`} onClick={() => onClick(i, j)} key={j}>{col.id}</span>
               ))}
             </div>
           ))}
