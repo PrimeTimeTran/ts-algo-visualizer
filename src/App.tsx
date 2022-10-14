@@ -34,12 +34,12 @@ type node = {
   checked: boolean;
 }
 
-function getBoard() {
+function getBoard(shouldCheck = false) {
   var board: node[][] = [];
   for (var i = 0; i < 8; i++) {
     board[i] = [];
     for (var j = 0; j < 8; j++) {
-      const cur: node = { id: `${i}, ${j}`, checked: false, row: i, col: j };
+      const cur: node = { id: `${i},${j}`, checked: shouldCheck ? true : false, row: i, col: j };
       board[i][j] = cur;
     }
   }
@@ -50,24 +50,35 @@ function Game() {
   const [board, setBoard] = useState(getBoard())
 
   function onClick(r: number, c: number) {
-    console.log(board)
     board[r][c] = { ...board[r][c], checked: true }
     const newBoard = [...board]
     setBoard(newBoard)
   }
 
-  useEffect(() => {
+  function delay(i: number, j: number) {
+    setTimeout(() => {
+      const square = window.document.getElementById(`${i},${j}`)!
+      square.className += ' checked'
+    }, 1000 * i * j);
+  }
 
-  }, [board])
+  function onDFS() {
+    for (let r = 0; r < 8; r++) {
+      for (let c = 0; c < 8; c++) {
+        delay(r, c)
+      }
+    }
+  }
 
   return (
     <div className="App">
+      <button onClick={onDFS}>DFS</button>
       <header className="App-header">
         <div>
           {board.map((row, i) => (
             <div key={i}>
               {row.map((col, j) => (
-                <span className={`square ${col.checked ? 'checked' : ''}`} onClick={() => onClick(i, j)} key={j}>{col.id}</span>
+                <span id={col.id} className={`square ${col.checked ? 'checked' : ''}`} onClick={() => onClick(i, j)} key={j}>{col.id}</span>
               ))}
             </div>
           ))}
