@@ -27,5 +27,13 @@
 }
 
 .square:hover {
-  background-color: red;
+  /* background-color: red; */
+}
+
+.checked {
+  background-color: aqua;
+  /* background-color: #AD310B; */
+  -webkit-transition: background-color 1000ms linear;
+  -ms-transition: background-color 1000ms linear;
+  transition: background-color 1000ms linear;
 }

@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react'
+
 import './App.css';
 
 // interface square {
@@ -27,19 +29,36 @@ import './App.css';
 
 type node = {
   id: string;
+  row: number;
+  col: number;
+  checked: boolean;
 }
 
-function Game() {
-  var board: {}[][] = [];
+function getBoard() {
+  var board: node[][] = [];
   for (var i = 0; i < 8; i++) {
     board[i] = [];
     for (var j = 0; j < 8; j++) {
-      const someObj: node = { id: `${i}, ${j}` };
-      board[i][j] = someObj;
+      const cur: node = { id: `${i}, ${j}`, checked: false, row: i, col: j };
+      board[i][j] = cur;
     }
   }
+  return board;
+}
 
-  console.log(board)
+function Game() {
+  const [board, setBoard] = useState(getBoard())
+
+  function onClick(r: number, c: number) {
+    console.log(board)
+    board[r][c] = { ...board[r][c], checked: true }
+    const newBoard = [...board]
+    setBoard(newBoard)
+  }
+
+  useEffect(() => {
+
+  }, [board])
 
   return (
     <div className="App">
@@ -48,7 +67,7 @@ function Game() {
           {board.map((row, i) => (
             <div key={i}>
               {row.map((col, j) => (
-                <span key={j}>{col}</span>
+                <span className={`square ${col.checked ? 'checked' : ''}`} onClick={() => onClick(i, j)} key={j}>{col.id}</span>
               ))}
             </div>
           ))}
