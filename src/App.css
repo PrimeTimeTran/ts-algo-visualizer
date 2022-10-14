@@ -14,13 +14,13 @@
 
 .square {
   padding: 0;
-  width: 64px;
+  width: 32px;
   float: left;
-  height: 64px;
-  font-size: 24px;
+  height: 32px;
+  font-size: 10px;
   margin-top: -1px;
   font-weight: bold;
-  line-height: 64px;
+  line-height: 32px;
   margin-right: -1px;
   text-align: center;
   border: 1px solid #999;
@@ -31,9 +31,42 @@
 }
 
 .checked {
-  background-color: aqua;
-  /* background-color: #AD310B; */
-  -webkit-transition: background-color 1000ms linear;
-  -ms-transition: background-color 1000ms linear;
-  transition: background-color 1000ms linear;
+  animation-delay: 0;
+  animation-duration: 1.5s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+  animation-direction: alternate;
+  animation-name: visitedAnimation;
+  animation-timing-function: ease-out;
+}
+
+.start {
+  background-color: red;
+}
+.end {
+  background-color: green;
+}
+
+
+@keyframes visitedAnimation {
+  0% {
+    border-radius: 100%;
+    transform: scale(0.3);
+    background-color: rgba(0, 0, 66, 0.75);
+  }
+
+  50% {
+    background-color: rgba(17, 104, 217, 0.75);
+  }
+
+  75% {
+    transform: scale(1.2);
+    background-color: rgba(0, 217, 159, 0.75);
+  }
+
+  100% {
+    transform: scale(1);
+    background-color: rgba(0, 190, 218, 0.75);
+  }
 }
