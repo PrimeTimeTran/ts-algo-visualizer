@@ -1,14 +1,4 @@
-type squareProps = {
-  onClick: (arg1: { type: string; }, arg2: number, arg3: number) => void;
-  square: {
-    id: string;
-    end: boolean;
-    start: boolean;
-    checked: boolean;
-    inRoute: boolean;
-    distance: typeof Infinity | string;
-  };
-}
+import { squareProps } from '../types/square'
 
 function Square(props: squareProps) {
   const classes = `
