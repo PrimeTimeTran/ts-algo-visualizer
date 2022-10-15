@@ -46,8 +46,8 @@ function Game() {
   const [board, setBoard] = useState(matrix)
   const [finishNode, setFinishNode] = useState(FINISH_NODE)
 
-  const onRefresh = (event: { key: string }) => {
-    setBoard(getBoard)
+  const onRefresh = () => {
+    setBoard(getBoard())
     setFinishNode(FINISH_NODE)
   };
 
