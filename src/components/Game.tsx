@@ -27,7 +27,6 @@ function createNode(rc: string, i: number, j: number) {
 }
 
 function getBoard() {
-  console.log('New board')
   var board: node[][] = [];
   for (let i = 0; i < ROWS; i++) {
     board[i] = [];
@@ -58,7 +57,6 @@ function Game() {
 
   function backTrack(start: string) {
     setTimeout(() => {
-      if (foundRef) return
       const vals = start.split(',')
       var y = parseInt(vals[0])
       var x = parseInt(vals[1])
@@ -74,9 +72,11 @@ function Game() {
       } else if (y === 5 && x === 45) {
         setFound(true)
       }
-      board[y][x].inRoute = true
-      setBoard([...board])
-      backTrack(`${y},${x}`)
+      if (!foundRef || board[y][x].distance !== 'Finish') {
+        board[y][x].inRoute = true
+        setBoard([...board])
+        backTrack(`${y},${x}`)
+      }
     }, 20);
   }
 
