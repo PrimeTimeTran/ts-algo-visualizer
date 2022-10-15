@@ -75,3 +75,33 @@
 .end {
   background-color: green !important;
 }
+
+.shortest-path {
+  animation-delay: 0;
+  animation-name: pump;
+  background-color: grey;
+  animation-duration: 1.5s;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+  animation-timing-function: linear;
+}
+
+
+@keyframes pump {
+  0% {
+    transform: scale(.6);
+    background-color: grey;
+  }
+
+  50% {
+    transform: scale(1.2);
+    background-color: grey;
+  }
+
+  100% {
+    transform: scale(1.0);
+    background-color: grey;
+  }
+}

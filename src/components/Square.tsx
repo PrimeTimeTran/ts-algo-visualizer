@@ -6,7 +6,7 @@ function Square(props: squareProps) {
       ${props.square.end ? 'end' : ''}
       ${props.square.start ? 'start' : ''} 
       ${props.square.checked ? 'checked' : ''} 
-      ${props.square.inRoute ? 'inRoute' : ''}
+      ${props.square.inRoute ? 'shortest-path' : ''}
     `
 
   const r = parseInt(props.square.id.split(',')[0])
