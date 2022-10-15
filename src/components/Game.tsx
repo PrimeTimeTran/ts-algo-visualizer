@@ -3,6 +3,8 @@ import { useState } from 'react'
 import Square from './Square'
 import Navbar from './NavBarr'
 
+import useKeyPress from '../hooks/useKeyPress';
+
 import { node } from '../types/square'
 
 const ROWS = 20
@@ -10,31 +12,46 @@ const COLS = 50
 const START_NODE = '10,5'
 const FINISH_NODE = '10,45'
 
-function getBoard(shouldCheck = false) {
+function createNode(rc: string, i: number, j: number) {
+  const cur: node = {
+    row: i,
+    col: j,
+    id: rc,
+    inRoute: false,
+    checked: false,
+    distance: Infinity,
+    end: rc === FINISH_NODE,
+    start: rc === START_NODE,
+  };
+  return cur
+}
+
+function getBoard() {
+  console.log('New board')
   var board: node[][] = [];
-  for (var i = 0; i < ROWS; i++) {
+  for (let i = 0; i < ROWS; i++) {
     board[i] = [];
-    for (var j = 0; j < COLS; j++) {
+    for (let j = 0; j < COLS; j++) {
       const rc = `${i},${j}`
-      const cur: node = {
-        row: i,
-        col: j,
-        id: rc,
-        inRoute: false,
-        distance: Infinity,
-        end: rc === FINISH_NODE,
-        start: rc === START_NODE,
-        checked: shouldCheck ? true : false,
-      };
+      const cur = createNode(rc, i, j)
       board[i][j] = cur;
     }
   }
   return board;
 }
 
+const matrix = getBoard()
+
 function Game() {
-  const [board, setBoard] = useState(getBoard())
+  const [board, setBoard] = useState(matrix)
   const [finishNode, setFinishNode] = useState(FINISH_NODE)
+
+  const onRefresh = (event: { key: string }) => {
+    setBoard(getBoard)
+    setFinishNode(FINISH_NODE)
+  };
+
+  useKeyPress(['r'], onRefresh);
 
   function backTrack(start: string) {
     let found = false
