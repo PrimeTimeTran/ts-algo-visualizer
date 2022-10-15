@@ -42,7 +42,7 @@
 }
 
 .start {
-  background-color: red;
+  background-color: red !important;
 }
 .end {
   background-color: green;
@@ -69,4 +69,9 @@
     transform: scale(1);
     background-color: rgba(0, 190, 218, 0.75);
   }
+}
+
+.inRoute {
+  background-color: yellow;
+  animation-fill-mode: none;
 }
