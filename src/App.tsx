@@ -55,7 +55,12 @@ function Square(props: squareProps) {
   return <span
     key={props.square.id}
     onClick={() => props.onClick(props.i, props.j)}
-    className={`square ${props.square.checked ? 'checked' : ''} ${props.square.start ? 'start' : ''} ${props.square.end ? 'end' : ''}`}
+    className={`
+      square 
+      ${props.square.end ? 'end' : ''}
+      ${props.square.start ? 'start' : ''} 
+      ${props.square.checked ? 'checked' : ''} 
+    `}
   >
     {props.square.id}
   </span>
@@ -85,10 +90,15 @@ function Game() {
   const [board, setBoard] = useState(getBoard())
   function onClick(r: number, c: number) {
     var seen = new Set()
+    var stop = false
+    var finishNode = '5,45'
     function dfs(r: number, c: number, delay: number) {
       setTimeout(() => {
         delay += 25
-        if (seen.has(`${r},${c}`) || r < 0 || c < 0 || r === ROWS || c === COLS) {
+        if (`${r},${c}` == finishNode) {
+          stop = true
+        }
+        if (seen.has(`${r},${c}`) || r < 0 || c < 0 || r === ROWS || c === COLS || stop) {
           return
         }
         seen.add(`${r},${c}`);
