@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import Square from './Square'
+import Navbar from './NavBarr'
 
 import { node } from '../types/square'
 
@@ -103,21 +104,24 @@ function Game() {
   }
 
   return (
-    <div className="App">
-      <header className="App-header">
-        {board.map((row, i) => (
-          <div key={i}>
-            {row.map((square, j) => {
-              return <Square
-                key={square.id}
-                square={square}
-                onClick={onClick}
-              />
-            })}
-          </div>
-        ))}
-      </header>
-    </div>
+    <>
+      <Navbar />
+      <div className="App">
+        <header className="App-header">
+          {board.map((row, i) => (
+            <div key={i}>
+              {row.map((square, j) => {
+                return <Square
+                  key={square.id}
+                  square={square}
+                  onClick={onClick}
+                />
+              })}
+            </div>
+          ))}
+        </header>
+      </div>
+    </>
   );
 }
 
