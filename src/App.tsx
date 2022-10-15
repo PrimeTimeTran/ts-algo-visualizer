@@ -2,33 +2,10 @@ import { useState } from 'react'
 
 import './App.css';
 
-// interface square {
-//   id: number,
-//   weight: 0,
-//   path: null,
-//   status: string,
-//   direction: null,
-//   previousNode: null,
-//   storedDirection: null,
-//   relatesToObject: false,
-//   heuristicDistance: null,
-//   distance: typeof Infinity,
-//   totalDistance: typeof Infinity,
-//   overwriteObjectRelation: false,
-//   // otherid: id,
-//   // otherstatus: status,
-//   // otherpreviousNode: null,
-//   // otherpath: null,
-//   // otherdirection: null,
-//   // otherstoredDirection: null,
-//   // otherdistance: Infinity,
-//   // otherweight: 0,
-//   // otherrelatesToObject: false,
-//   // otheroverwriteObjectRelation: false,
-// }
-
-const ROWS = 10
+const ROWS = 20
 const COLS = 50
+const START_NODE = '10,5'
+const FINISH_NODE = '10,45'
 
 type node = {
   id: string;
@@ -42,15 +19,8 @@ type node = {
 }
 
 type squareProps = {
+  square: node;
   onClick: (arg1: { type: string; }, arg2: number, arg3: number) => void;
-  square: {
-    id: string;
-    end: boolean;
-    start: boolean;
-    checked: boolean;
-    inRoute: boolean;
-    distance: typeof Infinity | string;
-  };
 }
 
 function Square(props: squareProps) {
@@ -68,6 +38,7 @@ function Square(props: squareProps) {
   return <span
     className={classes}
     onClick={(e) => props.onClick(e, r, c)}
+    onContextMenu={(e) => props.onClick(e, r, c)}
   >
     {props.square.inRoute ? props.square.distance : props.square.start ? 'Start' : ''}
   </span>
@@ -84,9 +55,9 @@ function getBoard(shouldCheck = false) {
         col: j,
         id: rc,
         inRoute: false,
-        end: rc === '5,45',
         distance: Infinity,
-        start: rc === '5,5',
+        end: rc === FINISH_NODE,
+        start: rc === START_NODE,
         checked: shouldCheck ? true : false,
       };
       board[i][j] = cur;
@@ -97,6 +68,7 @@ function getBoard(shouldCheck = false) {
 
 function Game() {
   const [board, setBoard] = useState(getBoard())
+  const [finishNode, setFinishNode] = useState(FINISH_NODE)
 
   function backTrack(start: string) {
     let found = false
@@ -105,13 +77,14 @@ function Game() {
       const vals = start.split(',')
       var y = parseInt(vals[0])
       var x = parseInt(vals[1])
-      if (y < 5) {
+      const [endY, endX] = finishNode.split(',')
+      if (y < parseInt(endY)) {
         y++
-      } else if (y > 5) {
+      } else if (y > parseInt(endY)) {
         y--
-      } else if (x < 45) {
+      } else if (x < parseInt(endX)) {
         x++
-      } else if (x > 45) {
+      } else if (x > parseInt(endX)) {
         x--
       } else if (y === 5 && x === 45) {
         found = true
@@ -119,48 +92,49 @@ function Game() {
       board[y][x].inRoute = true
       setBoard([...board])
       backTrack(`${y},${x}`)
-    }, 100);
+    }, 20);
   }
 
-  function onClick(e: { type: string }, r: number, c: number) {
+  function search(r: number, c: number) {
     var stop = false
-    var finishNode = '5,45'
     var start = `${r},${c}`
-    function dfs(r: number, c: number, delay: number, distance: number) {
+    function bfs(r: number, c: number, delay: number, distance: number) {
       setTimeout(() => {
-        delay += 100
-        if (`${r},${c}` === finishNode) {
-          board[r][c] = {
-            ...board[r][c],
-            checked: true,
-            start: start === `${r},${c}`,
-            distance: 'Finish'
-          }
+        delay += 20
+        var curNode = `${r},${c}`
+        if (curNode === finishNode) {
           stop = true
+          // board[r][c].checked = true
+          board[r][c].distance = 'Finish'
           setTimeout(() => backTrack(start), 1000)
         }
-        if (r < 0 || c < 0 || r === ROWS || c === COLS || stop || board[r][c].checked) {
-          return
-        }
+        const outOfBounds = r < 0 || c < 0 || r === ROWS || c === COLS
+        if (outOfBounds || stop || board[r][c].checked) return
         board[r][c] = {
           ...board[r][c],
           checked: true,
-          start: start === `${r},${c}`,
-          distance: start === `${r},${c}` ? 0 : distance
+          start: start === curNode,
+          distance: start === curNode ? 0 : distance
         }
         const newBoard = [...board]
         setBoard(newBoard)
-        dfs(r + 1, c, delay, distance + 1)
-        dfs(r, c + 1, delay, distance + 1)
-        dfs(r - 1, c, delay, distance + 1)
-        dfs(r, c - 1, delay, distance + 1)
+        bfs(r + 1, c, delay, distance + 1)
+        bfs(r, c + 1, delay, distance + 1)
+        bfs(r - 1, c, delay, distance + 1)
+        bfs(r, c - 1, delay, distance + 1)
       }, delay);
     }
     let delay = 0
+    bfs(r, c, delay, 0)
+  }
+
+  function onClick(e: { type: string }, r: number, c: number) {
     if (e.type === 'click') {
-      dfs(r, c, delay, 0)
+      search(r, c)
     } else if (e.type === 'contextmenu') {
-      console.log('Right click');
+      board[r][c].end = true
+      setFinishNode(`${r},${c}`)
+      setBoard([...board])
     }
   }
 
