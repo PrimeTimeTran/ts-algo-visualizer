@@ -1,5 +1,4 @@
-import { parse } from 'path';
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 import './App.css';
 
@@ -43,9 +42,7 @@ type node = {
 }
 
 type squareProps = {
-  j: number;
-  i: number;
-  onClick: (arg1: number, arg2: number) => void;
+  onClick: (arg1: { type: string; }, arg2: number, arg3: number) => void;
   square: {
     id: string;
     end: boolean;
@@ -64,11 +61,13 @@ function Square(props: squareProps) {
       ${props.square.checked ? 'checked' : ''} 
       ${props.square.inRoute ? 'inRoute' : ''}
     `
+
+  const r = parseInt(props.square.id.split(',')[0])
+  const c = parseInt(props.square.id.split(',')[1])
+
   return <span
     className={classes}
-    key={props.square.id}
-    id={props.square.id}
-    onClick={() => props.onClick(props.i, props.j)}
+    onClick={(e) => props.onClick(e, r, c)}
   >
     {props.square.inRoute ? props.square.distance : props.square.start ? 'Start' : ''}
   </span>
@@ -95,8 +94,6 @@ function getBoard(shouldCheck = false) {
   }
   return board;
 }
-
-
 
 function Game() {
   const [board, setBoard] = useState(getBoard())
@@ -125,13 +122,13 @@ function Game() {
     }, 100);
   }
 
-  function onClick(r: number, c: number) {
+  function onClick(e: { type: string }, r: number, c: number) {
     var stop = false
     var finishNode = '5,45'
     var start = `${r},${c}`
     function dfs(r: number, c: number, delay: number, distance: number) {
       setTimeout(() => {
-        delay += 25
+        delay += 100
         if (`${r},${c}` === finishNode) {
           board[r][c] = {
             ...board[r][c],
@@ -142,7 +139,7 @@ function Game() {
           stop = true
           setTimeout(() => backTrack(start), 1000)
         }
-        if (board[r][c].checked || r < 0 || c < 0 || r === ROWS || c === COLS || stop) {
+        if (r < 0 || c < 0 || r === ROWS || c === COLS || stop || board[r][c].checked) {
           return
         }
         board[r][c] = {
@@ -160,26 +157,27 @@ function Game() {
       }, delay);
     }
     let delay = 0
-    dfs(r, c, delay, 0)
+    if (e.type === 'click') {
+      dfs(r, c, delay, 0)
+    } else if (e.type === 'contextmenu') {
+      console.log('Right click');
+    }
   }
 
   return (
     <div className="App">
       <header className="App-header">
-        <div>
           {board.map((row, i) => (
             <div key={i}>
-              {row.map((col, j) => (
-                <Square
-                  i={i}
-                  j={j}
-                  square={col}
+              {row.map((square, j) => {
+                return <Square
+                  key={square.id}
+                  square={square}
                   onClick={onClick}
                 />
-              ))}
+              })}
             </div>
           ))}
-        </div>
       </header>
     </div>
   );

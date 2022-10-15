@@ -41,14 +41,6 @@
   animation-timing-function: ease-out;
 }
 
-.start {
-  background-color: red !important;
-}
-.end {
-  background-color: green;
-}
-
-
 @keyframes visitedAnimation {
   0% {
     border-radius: 100%;
@@ -74,4 +66,12 @@
 .inRoute {
   background-color: grey;
   animation-fill-mode: none;
+}
+
+.start {
+  background-color: red !important;
+}
+
+.end {
+  background-color: green !important;
 }
