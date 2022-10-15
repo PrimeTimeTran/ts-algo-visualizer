@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 
 import Square from './Square'
 import Navbar from './NavBarr'
@@ -47,7 +47,6 @@ function Game() {
   const [found, setFound] = useState(false)
   const foundRef = useRef(found);
 
-
   const [finishNode, setFinishNode] = useState(FINISH_NODE)
 
   const onRefresh = () => {
@@ -55,15 +54,10 @@ function Game() {
     setFinishNode(FINISH_NODE)
   };
 
-  useEffect(() => {
-    console.log(found)
-  }, [found])
-
   useKeyPress(['r'], onRefresh);
 
   function backTrack(start: string) {
     setTimeout(() => {
-      console.log('backtrack')
       if (foundRef) return
       const vals = start.split(',')
       var y = parseInt(vals[0])
@@ -91,7 +85,6 @@ function Game() {
     var start = `${r},${c}`
     function bfs(r: number, c: number, delay: number, distance: number) {
       setTimeout(() => {
-        console.log('BFS')
         delay += 20
         var curNode = `${r},${c}`
         if (curNode === finishNode) {
