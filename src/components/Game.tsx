@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 import Square from './Square'
 import Navbar from './NavBarr'
@@ -44,6 +44,10 @@ const matrix = getBoard()
 
 function Game() {
   const [board, setBoard] = useState(matrix)
+  const [found, setFound] = useState(false)
+  const foundRef = useRef(found);
+
+
   const [finishNode, setFinishNode] = useState(FINISH_NODE)
 
   const onRefresh = () => {
@@ -51,12 +55,16 @@ function Game() {
     setFinishNode(FINISH_NODE)
   };
 
+  useEffect(() => {
+    console.log(found)
+  }, [found])
+
   useKeyPress(['r'], onRefresh);
 
   function backTrack(start: string) {
-    let found = false
     setTimeout(() => {
-      if (found) return
+      console.log('backtrack')
+      if (foundRef) return
       const vals = start.split(',')
       var y = parseInt(vals[0])
       var x = parseInt(vals[1])
@@ -70,7 +78,7 @@ function Game() {
       } else if (x > parseInt(endX)) {
         x--
       } else if (y === 5 && x === 45) {
-        found = true
+        setFound(true)
       }
       board[y][x].inRoute = true
       setBoard([...board])
@@ -83,6 +91,7 @@ function Game() {
     var start = `${r},${c}`
     function bfs(r: number, c: number, delay: number, distance: number) {
       setTimeout(() => {
+        console.log('BFS')
         delay += 20
         var curNode = `${r},${c}`
         if (curNode === finishNode) {
