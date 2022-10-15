@@ -72,6 +72,6 @@
 }
 
 .inRoute {
-  background-color: yellow;
+  background-color: grey;
   animation-fill-mode: none;
 }

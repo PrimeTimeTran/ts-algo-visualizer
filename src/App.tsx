@@ -39,7 +39,7 @@ type node = {
   start: boolean;
   checked: boolean;
   inRoute: boolean;
-  distance: typeof Infinity;
+  distance: typeof Infinity | string;
 }
 
 type squareProps = {
@@ -52,7 +52,7 @@ type squareProps = {
     start: boolean;
     checked: boolean;
     inRoute: boolean;
-    distance: typeof Infinity;
+    distance: typeof Infinity | string;
   };
 }
 
@@ -62,7 +62,7 @@ function Square(props: squareProps) {
       ${props.square.end ? 'end' : ''}
       ${props.square.start ? 'start' : ''} 
       ${props.square.checked ? 'checked' : ''} 
-      ${props.square.inRoute ? 'inRoute' : ''} 
+      ${props.square.inRoute ? 'inRoute' : ''}
     `
   return <span
     className={classes}
@@ -70,6 +70,7 @@ function Square(props: squareProps) {
     id={props.square.id}
     onClick={() => props.onClick(props.i, props.j)}
   >
+    {props.square.inRoute ? props.square.distance : props.square.start ? 'Start' : ''}
   </span>
 }
 
@@ -99,14 +100,14 @@ function getBoard(shouldCheck = false) {
 
 function Game() {
   const [board, setBoard] = useState(getBoard())
-  let foundit = false
-  function backTrack(start: string) {
-    setTimeout(() => {
-      if (foundit) return
-      const splitted = start.split(',')
-      var y = parseInt(splitted[0])
-      var x = parseInt(splitted[1])
 
+  function backTrack(start: string) {
+    let found = false
+    setTimeout(() => {
+      if (found) return
+      const vals = start.split(',')
+      var y = parseInt(vals[0])
+      var x = parseInt(vals[1])
       if (y < 5) {
         y++
       } else if (y > 5) {
@@ -116,8 +117,7 @@ function Game() {
       } else if (x > 45) {
         x--
       } else if (y === 5 && x === 45) {
-        foundit = true
-        console.log('found it')
+        found = true
       }
       board[y][x].inRoute = true
       setBoard([...board])
@@ -126,7 +126,6 @@ function Game() {
   }
 
   function onClick(r: number, c: number) {
-    var seen = new Set()
     var stop = false
     var finishNode = '5,45'
     var start = `${r},${c}`
@@ -134,13 +133,18 @@ function Game() {
       setTimeout(() => {
         delay += 25
         if (`${r},${c}` === finishNode) {
+          board[r][c] = {
+            ...board[r][c],
+            checked: true,
+            start: start === `${r},${c}`,
+            distance: 'Finish'
+          }
           stop = true
-          backTrack(start)
+          setTimeout(() => backTrack(start), 1000)
         }
-        if (seen.has(`${r},${c}`) || r < 0 || c < 0 || r === ROWS || c === COLS || stop) {
+        if (board[r][c].checked || r < 0 || c < 0 || r === ROWS || c === COLS || stop) {
           return
         }
-        seen.add(`${r},${c}`);
         board[r][c] = {
           ...board[r][c],
           checked: true,
